@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<style type="text/css">
+		*{list-style: none;border: none;padding: 0;margin: 0;text-decoration: none;}
+		.counterBox{width: 324px;border: 1px solid #333;border-right: none;}
+		.counterBox .show{width:100%;height:100px;background: #333;}
+		.counterBox .show input{width:300px;height:100px;padding:0 12px;line-height:100px;color:#fff;font-size:30px;border: none;background: none;text-align: right;}
+		.counter li{width:80px;height:80px;border-right: 1px solid #333;border-bottom: 1px solid #333;text-align: center;line-height: 100px; float: left;background: #f5f5f5;}
+		.counter li.zeto{width: 161px;}
+		.counter li a {font-size: 20px;color: #000;display: block;}
+	</style>
+</head>
+<body>
+	<div class="counterBox">
+		<div class="show">
+			<input type="text" value="0" id="counterInput">
+		</div>
+		<div class="counter">
+			<ul>
+				<li id="clearAll">
+					<a href="javascript:;">AC</a>
+				</li>
+				<li id="plus-minus">
+					<a href="javascript:;">±</a>
+				</li>
+				<li id="remainder">
+					<a href="javascript:;">%</a>
+				</li>
+				<li id="divided">
+					<a href="javascript:;">÷</a>
+				</li>
+				<li class="number">
+					<a href="javascript:;">7</a>
+				</li>
+				<li class="number">
+					<a href="javascript:;">8</a>
+				</li>
+				<li class="number">
+					<a href="javascript:;">9</a>
+				</li>
+				<li id="multiplied">
+					<a href="javascript:;">×</a>
+				</li>
+				<li class="number">
+					<a href="javascript:;">4</a>
+				</li>
+				<li class="number">
+					<a href="javascript:;">5</a>
+				</li>
+				<li class="number">
+					<a href="javascript:;">6</a>
+				</li>
+				<li id="minused">
+					<a href="javascript:;">－</a>
+				</li>
+				<li class="number">
+					<a href="javascript:;">1</a>
+				</li>
+				<li class="number">
+					<a href="javascript:;">2</a>
+				</li>
+				<li class="number">
+					<a href="javascript:;">3</a>
+				</li>
+				<li id="plused">
+					<a href="javascript:;">＋</a>
+				</li>
+				<li class="zeto number">
+					<a href="javascript:;">0</a>
+				</li>
+				<li id="parseFloated">
+					<a href="javascript:;">.</a>
+				</li>
+				<li id="equalTo">
+					<a href="javascript:;">＝</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var counter = function(target,how){
+			this.target = target;
+			this.default = true;
+			this.numArrBefore = "";//保存每次运算后的值
+			this.numArr = "";//保存运算符后面连续输入的数字（保存当前输入的数值）
+			this.isHow = "isPlus" || how;//加减乘除(默认第一次输入就执行一次加法)
+			this.isparseFloat = "";//小数点
+			this.clearAll();
+			this.numberclick();
+			this.plus();
+			this.minus();
+			this.multipli();
+			this.divide();
+			this.parseFloat();
+			this.equalTo();
+			this.remainder();
+			this.plusMinus();
+		}
+		counter.prototype = {
+			clearAll : function(){
+				var _this = this;
+				document.getElementById("clearAll").addEventListener("click", function(e){
+					_this.target.value = "0";
+					_this.isparseFloat = "";
+					_this.numArrBefore = "";
+					_this.numArr = "";
+				})
+				
+			},
+			plus : function(){
+				var _this = this;
+				document.getElementById("plused").addEventListener("click", function(){
+					_this.appendInput(_this.numArr);
+					_this.isHow = "isPlus";
+					_this.default = false;
+					_this.isparseFloat = "";
+					_this.numArr = "";
+				})
+				
+			},
+			minus : function(){
+				var _this = this;
+				document.getElementById("minused").addEventListener("click", function(){
+					_this.appendInput(_this.numArr);
+					_this.isHow = "isMinus";
+					_this.default = false;
+					_this.isparseFloat = "";
+					_this.numArr = "";
+				})
+			},
+			multipli : function(){
+				var _this = this;
+				document.getElementById("multiplied").addEventListener("click", function(){
+					_this.appendInput(_this.numArr);
+					_this.isHow = "isMultipli";
+					_this.default = false;
+					_this.isparseFloat = "";
+					_this.numArr = "";
+				})
+			},
+			divide : function(){
+				var _this = this;
+				document.getElementById("divided").addEventListener("click", function(){
+					_this.appendInput(_this.numArr);
+					_this.isHow = "isDivide";
+					_this.default = false;
+					_this.isparseFloat = "";
+					_this.numArr = "";
+				})
+			},
+			parseFloat : function(){
+				var _this = this;
+				document.getElementById("parseFloated").addEventListener("click", function(){
+					if (_this.target.value.indexOf(".") == -1){
+						_this.target.value = _this.target.value+".";
+						_this.numArr = _this.target.value;
+						_this.isparseFloat = "isparseFloat";
+						return false;
+					}
+					
+				})
+			},
+			equalTo : function(){
+				var _this = this;
+				document.getElementById("equalTo").addEventListener("click",function(){
+					_this.appendInput(_this.numArr);
+					_this.isHow = "";
+					_this.default = false;
+					_this.isparseFloat = "";
+					_this.numArr = "";
+				})
+				
+			},
+			remainder : function(){
+				var _this = this;
+				document.getElementById("remainder").addEventListener("click",function(){
+					_this.appendInput(_this.numArr);
+					_this.isHow = "isRemainder";
+					_this.default = false;
+					_this.isparseFloat = "";
+					_this.numArr = "";
+				})
+			},
+			plusMinus : function(){
+				var _this = this;
+				document.getElementById("plus-minus").addEventListener("click",function(){
+					// if (_this.numArr.indexOf("-") == -1) {
+					// 	_this.numArr = _this.numArr.concat("-");
+					// }else{
+					// 	_this.numArr = _this.numArr.substr(1);
+					// }
+
+					_this.numArr = _this.numArr * (-1) + "";
+					_this.target.value = _this.numArr
+				})
+			},
+			appendInput : function(num){
+				switch (this.isHow){
+					case "isPlus":
+						this.target.value = parseFloat((this.numArrBefore)*1+num*1);
+						this.numArrBefore = this.target.value;
+						// this.isHow = "";
+						break;
+					case "isMinus":
+						if (this.numArrBefore == "") {
+							this.target.value = parseFloat(num*1);
+						}else{
+							this.target.value = parseFloat((this.numArrBefore)*1-num*1);
+						};
+						
+						this.numArrBefore = this.target.value;
+						// this.isHow = "";
+						break;
+					case "isMultipli":
+						this.target.value = parseFloat((this.numArrBefore)*num);
+						this.numArrBefore = this.target.value;
+						// this.isHow = "";
+						break;
+					case "isDivide":
+						this.target.value = parseFloat((this.numArrBefore)/num);
+						this.numArrBefore = this.target.value;
+						// this.isHow = "";
+						break;
+					case "isRemainder":
+						this.target.value = parseFloat((this.numArrBefore)%num);
+						this.numArrBefore = this.target.value;
+						break;
+					// case "isPlusMinus" : 
+					// 	this.target.value = parseFloat((-1)*num);
+					// 	this.numArrBefore = this.target.value;
+					// 	break;
+					default :
+
+						return false;
+
+						// if (this.default) {
+						// 	this.target.value = (this.target.value.concat(num))*1;//解决小数点后面不能输入0的问题（0乘以任何数都得0）
+						// 	this.default = false;
+						// 	return false;
+						// };
+						// this.target.value = this.target.value.concat(num);
+				}
+			},
+			numberclick : function(){
+				var _this = this, len = document.getElementsByTagName("li").length,parseFloatArr = "";
+				
+				// var numArr = "";//记录运算符后面输入的数字
+				for (var i = 0; i < len; i++) {
+					var className = document.getElementsByTagName("li")[i].className;
+					if (className.indexOf("number") != -1) {
+						document.getElementsByTagName("li")[i].addEventListener("click", function(){
+							var num = this.lastElementChild.innerHTML;	
+							_this.numArr =parseFloat(_this.numArr.concat(num))+"";
+
+							_this.target.value = _this.numArr;
+							// if (_this.default) {//第一次输入的时候默认前面添加加法以达到第一次输入的显示出来
+							// 	_this.isHow = "isPlus";
+
+							// 	if (_this.isparseFloat == "") {
+							// 		_this.appendInput(_this.numArr);
+							// 		_this.isHow = "";
+							// 	}else{
+							// 		_this.appendInput(_this.numArr);
+							// 	};
+
+							// }
+							// _this.target.value = _this.numArr;
+							// if (_this.default) {
+							// 	_this.target.value = (_this.target.value.concat(num))*1;
+							// 	_this.default = false;
+							// 	return false;
+							// };
+							// _this.target.value = _this.target.value.concat(num);
+							
+						})
+					};
+				};
+			}
+		}
+
+		var counter = new counter(document.getElementById("counterInput"));
+
+	</script>	
+</body>
+</html>
